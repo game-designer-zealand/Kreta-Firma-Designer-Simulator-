@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olia: Kreta Olivenolie Imperium</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #121212; color: #fff; overflow: hidden; }
+        
+        #sidebar {
+            width: 400px;
+            background: #1a1c23;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            border-right: 2px solid #2d313e;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+        }
+
+        h1 { color: #8bc34a; font-size: 22px; }
+        .subtitle { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+
+        .stats-box { 
+            background: #252836; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #3b3f54; 
+        }
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .stats-val { font-weight: bold; color: #ffeb3b; }
+
+        button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+        button:hover { background: #45a049; }
+
+        .section-title { font-size: 15px; color: #64b5f6; margin-top: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+
+        .company-card {
+            background: #252836;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 4px solid #888;
+        }
+        select {
+            background: #1a1c23;
+            color: white;
+            padding: 6px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+
+        #map { flex: 1; height: 100%; width: 100%; }
+        
+        .leaflet-popup-content-wrapper { background: #222; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div>
+            <h1>🫒 Olia Imperium</h1>
+            <p class="subtitle">Ejer af Olia & Kretas Olivenoliefabrikker</p>
+        </div>
+
+        <div class="stats-box">
+            <div class="stats-row">
+                <span>💰 Penge:</span>
+                <span id="money" class="stats-val">100.000 €</span>
+            </div>
+            <div class="stats-row">
+                <span>🏭 Olia Fabrikker:</span>
+                <span id="factories-count" class="stats-val">0</span>
+            </div>
+            <div class="stats-row">
+                <span>🚛 Biler på vejene:</span>
+                <span id="cars-count" class="stats-val" style="color:#8bc34a;">0</span>
+            </div>
+            <div class="stats-row">
+                <span>🪙 DK-comuer:</span>
+                <span id="dk-coins" class="stats-val" style="color:#64b5f6;">0</span>
+            </div>
+        </div>
+
+        <button onclick="buyDKCoin()" style="background-color: #2196F3;">Veksel 10.000 € ➔ 1 DK-comu</button>
+        <p style="font-size:11px; color:#aaa; text-align:center;">Overfør dine DK-comuer til Comu-app!</p>
+
+        <h3 class="section-title">🏢 Diplomati & Konkurrenter</h3>
+        
+        <div class="company-card" style="border-left-color: #8bc34a;">
+            <strong>🫒 Olia (Dit Firma)</strong>
+            <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+            <select onchange="updateOliaStance(this.value)">
+                <option value="neutral">Ligeglad (Neutral handel)</option>
+                <option value="rival">Aggressiv Konkurrent</option>
+                <option value="ally">Søger Alliancer</option>
+            </select>
+        </div>
+
+        <div id="competitors-list"></div>
+
+        <button style="background-color: #9c27b0; margin-top:10px;" onclick="addCompetitor()">+ Opret Nyt Firma/Selskab</button>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let money = 100000;
+        let factories = [];
+        let cars = [];
+        let dkCoins = 0;
+        let oliaStance = "neutral";
+
+        // Kort over Kreta centreret omkring Chania / Lakki / Voukolies
+        const map = L.map('map').setView([35.4800, 23.8000], 11);
+
+        // OpenStreetMap giver adgang til E65 motorvejen, landeveje og lokale grusveje
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Byg Olia Fabrik ved klik på kortet
+        map.on('click', function(e) {
+            if (money >= 20000) {
+                money -= 20000;
+                
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+                
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup("<b>🫒 Olia Fabrik</b><br>Kører og sælger olie!").openPopup();
+                
+                factories.push({ lat: lat, lng: lng });
+                
+                // Hver gang en fabrik oprettes, starter der biler på vejene
+                spawnCar(lat, lng);
+                
+                updateUI();
+            } else {
+                alert("Det koster 20.000 € at bygge en fabrik! Tjen flere penge først.");
+            }
+        });
+
+        // Biler der kører rundt på vejene og køber olivenolie / produkter
+        function spawnCar(startLat, startLng) {
+            // Opret bil-ikon på kortet
+            const carIcon = L.divIcon({
+                html: '🚛',
+                className: 'car-icon',
+                iconSize: [20, 20]
+            });
+
+            const carMarker = L.marker([startLat, startLng], { icon: carIcon }).addTo(map);
+            
+            let car = {
+                marker: carMarker,
+                lat: startLat,
+                lng: startLng,
+                dirLat: (Math.random() - 0.5) * 0.005,
+                dirLng: (Math.random() - 0.5) * 0.005
+            };
+            
+            cars.push(car);
+            updateUI();
+        }
+
+        // Animation af biler på vejene og handel
+        setInterval(() => {
+            cars.forEach(car => {
+                car.lat += car.dirLat;
+                car.lng += car.dirLng;
+                car.marker.setLatLng([car.lat, car.lng]);
+
+                // Biler genererer indtægt ved handel på deres rute
+                if (factories.length > 0) {
+                    let profit = oliaStance === 'rival' ? 150 : (oliaStance === 'ally' ? 250 : 200);
+                    money += profit;
+                }
+            });
+            if (cars.length > 0) updateUI();
+        }, 1000);
+
+        function updateUI() {
+            document.getElementById('money').innerText = money.toLocaleString() + " €";
+            document.getElementById('factories-count').innerText = factories.length;
+            document.getElementById('cars-count').innerText = cars.length;
+            document.getElementById('dk-coins').innerText = dkCoins;
+        }
+
+        function buyDKCoin() {
+            if (money >= 10000) {
+                money -= 10000;
+                dkCoins++;
+                updateUI();
+                alert("Du har købt 1 DK-comu! Indtast denne saldo i din Comu-app.");
+            } else {
+                alert("Du skal bruge 10.000 € for at veksle til 1 DK-comu.");
+            }
+        }
+
+        function updateOliaStance(val) {
+            oliaStance = val;
+        }
+
+        function addCompetitor() {
+            const name = prompt("Indtast navnet på det nye firma/selskab:", "Chania Transport & Olie");
+            if (!name) return;
+
+            const list = document.getElementById('competitors-list');
+            const card = document.createElement('div');
+            card.className = 'company-card';
+            card.innerHTML = `
+                <strong>🏢 ${name}</strong>
+                <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Relation til Olia:</label>
+                <select>
+                    <option value="neutral">Neutral / Ligeglad</option>
+                    <option value="rival">Konkurrent (Rival)</option>
+                    <option value="ally">Allieret Partner</option>
+                </select>
+                <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Relation til andre selskaber:</label>
+                <select>
+                    <option value="neutral">Neutral overfor andre</option>
+                    <option value="rival">I krig med andre</option>
+                    <option value="ally">Allieret med andre</option>
+                </select>
+            `;
+            list.appendChild(card);
+        }
+    </script>
+</body>
+</html>
