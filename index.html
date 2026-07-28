@@ -104,9 +104,25 @@
     🚀 Åbn Comu-app med mine DK-comuer
 </button>
 
-        <h3 class="section-title">🏢 Diplomati & Konkurrenter</h3>
+        <div class="company-card" style=border-right-color: #8bc34a;">
+            <strong>🫒Pomoko Olie</strong>
+           <label style="font-size:5px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+            <select onchange="updatePomokoStance(this.value)">
+                <option value="neutral">Ligeglad (Neutral handel)</option>
+                <option value="rival">Aggressiv Konkurrent</option>
+                <option value="ally">Søger Alliancer</option
+            
+                <div class="company-card" style=border-right-color: #8bc34a;">
+                <strong>🍋AGROCRETA</strong> Olie</strong>
+         <label style="font-size:5px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+            <select onchange="updateAGROCRETAStance(this.value)">
+                <option value="neutral">Ligeglad (Neutral handel)</option>
+                <option value="rival">Aggressiv Konkurrent</option>
+                <option value="ally">Søger Alliancer</option
+            
         
-        <div class="company-card" style="border-left-color: #8bc34a;">
+            
+            <div class="company-card" style="border-left-color: #8bc34a;">
             <strong>🫒 Olia (Dit Firma)</strong>
             <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
             <select onchange="updateOliaStance(this.value)">
@@ -130,7 +146,13 @@
         let cars = [];
         let dkCoins = 0;
         let oliaStance = "neutral";
-
+         
+        let othercompaniesfactories = [];
+        let othercompaniescars = [];
+        let othercompanieseEuro = 12;
+        let othercompaniesmoney = 100000
+        
+        
         // Kort over Kreta centreret omkring Chania / Lakki / Voukolies
         const map = L.map('map').setView([35.4800, 23.8000], 11);
 
@@ -144,6 +166,13 @@
         map.on('click', function(e) {
             if (money >= 20000) {
                 money -= 20000;
+             // Byg et andet firmas Fabrik ved klik på kortet 
+                map.on('click', function(e) {
+                    if (Euro >=1) {
+                        Euro -= 1;
+                
+                
+                
                 
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
