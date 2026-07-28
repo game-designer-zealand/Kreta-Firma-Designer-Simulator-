@@ -10,7 +10,7 @@
         body { display: flex; height: 100vh; background-color: #121212; color: #fff; overflow: hidden; }
         
         #sidebar {
-            width: 400px;
+            width: 420px;
             background: #1a1c23;
             padding: 20px;
             display: flex;
@@ -21,16 +21,17 @@
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
 
-        h1 { color: #8bc34a; font-size: 22px; }
-        .subtitle { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+        h1 { color: #8bc34a; font-size: 20px; margin-top: 5px; }
+        h2 { color: #ffb74d; font-size: 18px; }
+        .subtitle { font-size: 12px; color: #aaa; margin-bottom: 8px; }
 
         .stats-box { 
             background: #252836; 
-            padding: 15px; 
+            padding: 12px; 
             border-radius: 8px; 
             border: 1px solid #3b3f54; 
         }
-        .stats-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
         .stats-val { font-weight: bold; color: #ffeb3b; }
 
         button {
@@ -42,18 +43,18 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.2s;
-            font-size: 13px;
+            font-size: 12px;
+            width: 100%;
+            margin-top: 4px;
         }
-        button:hover { background: #45a049; }
-
-        .section-title { font-size: 15px; color: #64b5f6; margin-top: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        button:hover { background: #45a049; filter: brightness(1.1); }
 
         .company-card {
             background: #252836;
             padding: 12px;
             border-radius: 6px;
-            margin-top: 10px;
-            border-left: 4px solid #888;
+            margin-top: 5px;
+            border-left: 4px solid #8bc34a;
         }
         select {
             background: #1a1c23;
@@ -66,45 +67,54 @@
             font-size: 12px;
         }
 
+        #event-banner {
+            background: #ff9800;
+            color: #000;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            display: none;
+        }
+
         #map { flex: 1; height: 100%; width: 100%; }
-        
         .leaflet-popup-content-wrapper { background: #222; color: #fff; }
     </style>
 </head>
 <body>
 
     <div id="sidebar">
+        <div id="event-banner">☀️ Ny begivenhed startet på Kreta!</div>
+
         <div>
-            
             <h2>🫒 Pomoko Imperium</h2>
-            <p class="subtitle">Ligeglad med Pomoko Olivenoliefabrikker</p>
+            <p class="subtitle">Konkurrent med Pomoko Olivenoliefabrikker</p>
         </div>
 
         <div class="stats-box">
             <div class="stats-row">
                 <span>💰 Penge:</span>
-                <span id="money" class="stats-val">100.000 €</span>
+                <span id="pomoko-money" class="stats-val">100.000 €</span>
             </div>
             <div class="stats-row">
                 <span>🏭 Pomoko Fabrikker:</span>
-                <span id="factories-count" class="stats-val">52</span>
+                <span id="pomoko-factories" class="stats-val">52</span>
             </div>
             <div class="stats-row">
                 <span>🚛 Biler på vejene:</span>
-                <span id="cars-count" class="stats-val" style="color:#8bc34a;">198</span>
+                <span id="pomoko-cars" class="stats-val" style="color:#ff9800;">198</span>
             </div>
             <div class="stats-row">
                 <span>💶 Euro:</span>
-                <span id="euro" class="stats-val" style="color:#64b5f6;">12</span>
-            
+                <span id="pomoko-euro" class="stats-val" style="color:#64b5f6;">12</span>
+            </div>
             <button onclick="buyEuro()" style="background-color: #2196F3;">Veksel 1 € ➔ 12 Euro💶</button>
-            
-            
-            
-            
-            
-            <h1>🫒 Olia Imperium</h1>
-            <p class="subtitle">Ejer af Olia Olivenoliefabrikker</p>
+        </div>
+
+        <div>
+            <h1>🫒 Olia Imperium (Dit Firma)</h1>
+            <p class="subtitle">Dyrk oliven, citroner og styr transporten på Kreta</p>
         </div>
 
         <div class="stats-box">
@@ -117,8 +127,16 @@
                 <span id="factories-count" class="stats-val">0</span>
             </div>
             <div class="stats-row">
+                <span>🍋 Citronlunde:</span>
+                <span id="lemon-groves-count" class="stats-val" style="color:#ffee58;">0</span>
+            </div>
+            <div class="stats-row">
                 <span>🚛 Biler på vejene:</span>
                 <span id="cars-count" class="stats-val" style="color:#8bc34a;">0</span>
+            </div>
+            <div class="stats-row">
+                <span>⚡ Lastbil Niveau:</span>
+                <span id="truck-level" class="stats-val" style="color:#b388ff;">Nv. 1</span>
             </div>
             <div class="stats-row">
                 <span>🪙 DK-comuer:</span>
@@ -126,33 +144,44 @@
             </div>
         </div>
 
-        <button onclick="buyDKCoin()" style="background-color: #2196F3;">Veksel 10.000 € ➔ 1 DK-comu</button>
-        <p style="font-size:11px; color:#aaa; text-align:center;">Overfør dine DK-comuer til Comu-app!</p>
-        <button onclick="https://game-designer-zealand.github.io/Comu-app-/()" style="background-color: #7c4dff; margin-top: 10px;">
-    🚀 Åbn Comu-app med mine DK-comuer
-</button>
+        <button onclick="buyLemonGrove()" style="background-color: #fbc02d; color: #000;">
+            🍋 Køb Kretensisk Citronlund (30.000 €)
+        </button>
+        <button onclick="upgradeTrucks()" style="background-color: #7e57c2;">
+            ⚡ Opgrader Lastbiler (50.000 €)
+        </button>
+        <button onclick="buyDKCoin()" style="background-color: #2196F3;">
+            🪙 Veksel 10.000 € ➔ 1 DK-comu
+        </button>
+        
+        <p style="font-size:11px; color:#aaa; text-align:center; margin-top: 2px;">Overfør dine DK-comuer til Comu-app!</p>
+        <button onclick="window.open('https://game-designer-zealand.github.io/Comu-app-/', '_blank')" style="background-color: #7c4dff;">
+            🚀 Åbn Comu-app med mine DK-comuer
+        </button>
 
-        <div class="company-card" style=border-right-color: #8bc34a;">
-            <strong>🫒Pomoko Olie</strong>
-           <label style="font-size:5px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+        <div class="company-card">
+            <strong>🫒 Pomoko Olie</strong>
+            <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning:</label>
             <select onchange="updatePomokoStance(this.value)">
                 <option value="neutral">Ligeglad (Neutral handel)</option>
                 <option value="rival">Aggressiv Konkurrent</option>
-                <option value="ally">Søger Alliancer</option
-            
-                <div class="company-card" style=border-right-color: #8bc34a;">
-                <strong>🍋AGROCRETA</strong> Olie</strong>
-         <label style="font-size:5px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+                <option value="ally">Søger Alliancer</option>
+            </select>
+        </div>
+
+        <div class="company-card">
+            <strong>🍋 AGROCRETA Frugt & Olie</strong>
+            <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning:</label>
             <select onchange="updateAGROCRETAStance(this.value)">
                 <option value="neutral">Ligeglad (Neutral handel)</option>
                 <option value="rival">Aggressiv Konkurrent</option>
-                <option value="ally">Søger Alliancer</option
-            
-        
-            
-            <div class="company-card" style="border-left-color: #8bc34a;">
+                <option value="ally">Søger Alliancer</option>
+            </select>
+        </div>
+
+        <div class="company-card" style="border-left-color: #ffeb3b;">
             <strong>🫒 Olia (Dit Firma)</strong>
-            <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning til Andre:</label>
+            <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Global Holdning:</label>
             <select onchange="updateOliaStance(this.value)">
                 <option value="neutral">Ligeglad (Neutral handel)</option>
                 <option value="rival">Aggressiv Konkurrent</option>
@@ -169,37 +198,37 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // SPIL-VARIABLER
         let money = 100000;
         let factories = [];
+        let lemonGroves = 0;
         let cars = [];
+        let pomokoCars = [];
+        let truckLevel = 1;
         let dkCoins = 0;
+        let eventMultiplier = 1;
+
         let oliaStance = "neutral";
-         
-        let othercompaniesfactories = [];
-        let othercompaniescars = [];
-        let othercompanieseEuro = 12;
-        let othercompaniesmoney = 100000
-        
-        
-        // Kort over Kreta centreret omkring Chania / Lakki / Voukolies
+        let pomokoStance = "neutral";
+        let agrocretaStance = "neutral";
+
+        // OPSETNING AF KORT (Chania / Kreta)
         const map = L.map('map').setView([35.4800, 23.8000], 11);
 
-        // OpenStreetMap giver adgang til E65 motorvejen, landeveje og lokale grusveje
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
+        // Start med et par Pomoko-biler på kortet
+        for(let i=0; i<3; i++) {
+            spawnPomokoCar(35.4800 + (Math.random()-0.5)*0.05, 23.8000 + (Math.random()-0.5)*0.05);
+        }
+
         // Byg Olia Fabrik ved klik på kortet
         map.on('click', function(e) {
             if (money >= 20000) {
                 money -= 20000;
-             // Byg Pomoko Fabrik ved klik på kortet 
-                map.on('click', function(b) {
-                    if (money >= 25000) {
-                        money -= 25000;
-                
-                
                 
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
@@ -209,18 +238,15 @@
                 
                 factories.push({ lat: lat, lng: lng });
                 
-                // Hver gang en fabrik oprettes, starter der biler på vejene
                 spawnCar(lat, lng);
-                
                 updateUI();
             } else {
                 alert("Det koster 20.000 € at bygge en fabrik! Tjen flere penge først.");
             }
         });
 
-        // Biler der kører rundt på vejene og køber olivenolie / produkter
+        // Opret spiller-lastbil
         function spawnCar(startLat, startLng) {
-            // Opret bil-ikon på kortet
             const carIcon = L.divIcon({
                 html: '🚛',
                 className: 'car-icon',
@@ -229,39 +255,111 @@
 
             const carMarker = L.marker([startLat, startLng], { icon: carIcon }).addTo(map);
             
-            let car = {
+            cars.push({
                 marker: carMarker,
                 lat: startLat,
                 lng: startLng,
-                dirLat: (Math.random() - 0.5) * 0.005,
-                dirLng: (Math.random() - 0.5) * 0.005
-            };
-            
-            cars.push(car);
+                dirLat: (Math.random() - 0.5) * 0.004,
+                dirLng: (Math.random() - 0.5) * 0.004
+            });
             updateUI();
         }
 
-        // Animation af biler på vejene og handel
+        // Opret Pomoko-lastbil (Konkurrent)
+        function spawnPomokoCar(startLat, startLng) {
+            const carIcon = L.divIcon({
+                html: '🚚',
+                className: 'car-icon',
+                iconSize: [20, 20]
+            });
+
+            const carMarker = L.marker([startLat, startLng], { icon: carIcon }).addTo(map);
+            
+            pomokoCars.push({
+                marker: carMarker,
+                lat: startLat,
+                lng: startLng,
+                dirLat: (Math.random() - 0.5) * 0.004,
+                dirLng: (Math.random() - 0.5) * 0.004
+            });
+        }
+
+        // SPIL-LØKKE (Biler bevæger sig & indtægt genereres hvert sekund)
         setInterval(() => {
+            // Flyt spiller-biler
             cars.forEach(car => {
                 car.lat += car.dirLat;
                 car.lng += car.dirLng;
                 car.marker.setLatLng([car.lat, car.lng]);
 
-                // Biler genererer indtægt ved handel på deres rute
                 if (factories.length > 0) {
-                    let profit = oliaStance === 'rival' ? 150 : (oliaStance === 'ally' ? 250 : 200);
-                    money += profit;
+                    let baseProfit = oliaStance === 'rival' ? 150 : (oliaStance === 'ally' ? 250 : 200);
+                    let totalProfit = baseProfit * truckLevel * eventMultiplier;
+                    money += totalProfit;
                 }
             });
-            if (cars.length > 0) updateUI();
+
+            // Flyt Pomoko-biler
+            pomokoCars.forEach(pCar => {
+                pCar.lat += pCar.dirLat;
+                pCar.lng += pCar.dirLng;
+                pCar.marker.setLatLng([pCar.lat, pCar.lng]);
+            });
+
+            // Passiv indtægt fra Citronlunde
+            if (lemonGroves > 0) {
+                money += lemonGroves * 300 * eventMultiplier;
+            }
+
+            updateUI();
         }, 1000);
 
-        function updateUI() {
-            document.getElementById('money').innerText = money.toLocaleString() + " €";
-            document.getElementById('factories-count').innerText = factories.length;
-            document.getElementById('cars-count').innerText = cars.length;
-            document.getElementById('dk-coins').innerText = dkCoins;
+        // TILFÆLDIGE EVENTS HVERT 45. SEKUND
+        setInterval(() => {
+            const events = [
+                { text: "☀️ Perfekt solskin i Chania! 2x Indtægt i 15 sekunder!", mult: 2 },
+                { text: "🍋 Stor efterspørgsel på citroner fra Tyskland! Bonuskasse!", bonus: 15000 },
+                { text: "🌧️ Regnvejr på bjergvejene. Indtægt halveres i 15 sekunder.", mult: 0.5 }
+            ];
+
+            let chosen = events[Math.floor(Math.random() * events.length)];
+            let banner = document.getElementById('event-banner');
+            banner.innerText = chosen.text;
+            banner.style.display = 'block';
+
+            if (chosen.bonus) money += chosen.bonus;
+            if (chosen.mult) eventMultiplier = chosen.mult;
+
+            setTimeout(() => {
+                banner.style.display = 'none';
+                eventMultiplier = 1;
+            }, 15000);
+            
+            updateUI();
+        }, 45000);
+
+        // KØBS-FUNKTIONER
+        function buyLemonGrove() {
+            if (money >= 30000) {
+                money -= 30000;
+                lemonGroves++;
+                updateUI();
+                alert("🍋 Du har købt en kretensisk citronlund! Den producerer nu friske citroner og giver passiv indtægt.");
+            } else {
+                alert("Du skal bruge 30.000 € for at købe en citronlund.");
+            }
+        }
+
+        function upgradeTrucks() {
+            let cost = truckLevel * 50000;
+            if (money >= cost) {
+                money -= cost;
+                truckLevel++;
+                updateUI();
+                alert("⚡ Dine lastbiler er opgraderet til Niveau " + truckLevel + "! De tjener nu betydeligt mere pr. tur.");
+            } else {
+                alert("Du har ikke nok penge. Det koster " + cost.toLocaleString() + " €.");
+            }
         }
 
         function buyDKCoin() {
@@ -269,15 +367,29 @@
                 money -= 10000;
                 dkCoins++;
                 updateUI();
-                alert("Du har købt 1 DK-comu! Indtast denne saldo i din Comu-app.");
+                alert("Du har købt 1 DK-comu! Husk at gemme din saldo til Comu-app.");
             } else {
                 alert("Du skal bruge 10.000 € for at veksle til 1 DK-comu.");
             }
         }
 
-        function updateOliaStance(val) {
-            oliaStance = val;
+        function buyEuro() {
+            alert("Du vekslede Euro for Pomoko!");
         }
+
+        // BRUGERFLADE OPDATERING
+        function updateUI() {
+            document.getElementById('money').innerText = money.toLocaleString() + " €";
+            document.getElementById('factories-count').innerText = factories.length;
+            document.getElementById('lemon-groves-count').innerText = lemonGroves;
+            document.getElementById('cars-count').innerText = cars.length;
+            document.getElementById('truck-level').innerText = "Nv. " + truckLevel;
+            document.getElementById('dk-coins').innerText = dkCoins;
+        }
+
+        function updateOliaStance(val) { oliaStance = val; }
+        function updatePomokoStance(val) { pomokoStance = val; }
+        function updateAGROCRETAStance(val) { agrocretaStance = val; }
 
         function addCompetitor() {
             const name = prompt("Indtast navnet på det nye firma/selskab:", "Chania Transport & Olie");
@@ -294,15 +406,10 @@
                     <option value="rival">Konkurrent (Rival)</option>
                     <option value="ally">Allieret Partner</option>
                 </select>
-                <label style="font-size:11px; display:block; margin-top:5px; color:#aaa;">Relation til andre selskaber:</label>
-                <select>
-                    <option value="neutral">Neutral overfor andre</option>
-                    <option value="rival">I krig med andre</option>
-                    <option value="ally">Allieret med andre</option>
-                </select>
             `;
             list.appendChild(card);
         }
     </script>
 </body>
 </html>
+
