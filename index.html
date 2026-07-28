@@ -75,8 +75,36 @@
 
     <div id="sidebar">
         <div>
+            
+            <h1>🫒 Pomoko Imperium</h1>
+            <p class="subtitle">Ligeglad med Pomoko Olivenoliefabrikker</p>
+        </div>
+
+        <div class="stats-box">
+            <div class="stats-row">
+                <span>💰 Penge:</span>
+                <span id="money" class="stats-val">100.000 €</span>
+            </div>
+            <div class="stats-row">
+                <span>🏭 Pomoko Fabrikker:</span>
+                <span id="factories-count" class="stats-val">52</span>
+            </div>
+            <div class="stats-row">
+                <span>🚛 Biler på vejene:</span>
+                <span id="cars-count" class="stats-val" style="color:#8bc34a;">198</span>
+            </div>
+            <div class="stats-row">
+                <span>💶 Euro:</span>
+                <span id="euro" class="stats-val" style="color:#64b5f6;">12</span>
+            
+            <button onclick="buyEuro()" style="background-color: #2196F3;">Veksel 1 € ➔ 12 Euro💶</button>
+            
+            
+            
+            
+            
             <h1>🫒 Olia Imperium</h1>
-            <p class="subtitle">Ejer af Olia & Kretas Olivenoliefabrikker</p>
+            <p class="subtitle">Ejer af Olia Olivenoliefabrikker</p>
         </div>
 
         <div class="stats-box">
@@ -166,11 +194,10 @@
         map.on('click', function(e) {
             if (money >= 20000) {
                 money -= 20000;
-             // Byg et andet firmas Fabrik ved klik på kortet 
-                map.on('click', function(e) {
-                    if (Euro >=1) {
-                        Euro -= 1;
-                
+             // Byg Pomoko Fabrik ved klik på kortet 
+                map.on('click', function(b) {
+                    if (money >= 25000) {
+                        money -= 25000;
                 
                 
                 
